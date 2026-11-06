@@ -1,7 +1,7 @@
 // Verified static content aggregates and ordered sections; no user data.
 export const WORKLOAD = {
-  "version": "nmt-2026-11-02-sections",
-  "observedAt": "2026-11-02T11:27:31.007Z",
+  "version": "nmt-2026-11-06-history-2",
+  "observedAt": "2026-11-06T14:16:33.697336+02:00",
   "status": "OBSERVED",
   "units": "minutes, confirmed by owner 2026-11-02",
   "scope": "all active ordinary lessons and active theory with active matching parents; no progress deduction",
@@ -217,70 +217,345 @@ export const WORKLOAD = {
       ]
     },
     "history": {
-      "courseId": 11,
-      "lessons": 198,
-      "themes": 48,
-      "lessonMinutes": 2694,
-      "theoryMinutes": 577,
-      "minutes": 3271,
+      "courseId": 123,
+      "courseName": "Історія України 2.0 ✨",
+      "observedAt": "2026-11-06T14:16:33.697336+02:00",
+      "lessons": 869,
+      "themes": 363,
+      "lessonMinutes": 8814,
+      "theoryMinutes": 1534,
+      "minutes": 10348,
       "min": 10,
       "max": 90,
       "step": 5,
+      "unestimatedActivities": {
+        "calibrations": 363
+      },
       "sections": [
         {
-          "id": 17,
-          "name": "7 Клас - Українські землі: пітекантропи, князі, монголи",
+          "id": 1387,
+          "name": "Вступ до історії України · 7 клас",
           "sort": 1,
-          "lessons": 20,
-          "themes": 5,
-          "lessonMinutes": 270,
-          "theoryMinutes": 103,
-          "minutes": 373
-        },
-        {
-          "id": 18,
-          "name": "8 Клас - Козацька доба: від повтання до державності",
-          "sort": 2,
-          "lessons": 23,
+          "lessons": 12,
           "themes": 6,
-          "lessonMinutes": 345,
-          "theoryMinutes": 78,
-          "minutes": 423
+          "lessonMinutes": 120,
+          "theoryMinutes": 25,
+          "minutes": 145
         },
         {
-          "id": 19,
-          "name": "9 Клас - Між двома імперіями: як боролися, як творили, як жили",
+          "id": 1388,
+          "name": "Стародавня історія України · 7 клас",
+          "sort": 2,
+          "lessons": 36,
+          "themes": 17,
+          "lessonMinutes": 360,
+          "theoryMinutes": 61,
+          "minutes": 421
+        },
+        {
+          "id": 1389,
+          "name": "Русь-Україна (Київська держава) · 7 клас",
           "sort": 3,
-          "lessons": 32,
-          "themes": 8,
-          "lessonMinutes": 480,
-          "theoryMinutes": 90,
-          "minutes": 570
+          "lessons": 36,
+          "themes": 16,
+          "lessonMinutes": 360,
+          "theoryMinutes": 60,
+          "minutes": 420
         },
         {
-          "id": 20,
-          "name": "10 Клас - Вогонь війни та революцій: боротьба України за свободу у XX столітті",
+          "id": 1390,
+          "name": "Королівство руське (Галицько-Волинська держава). Монгольська навала · 7 клас",
           "sort": 4,
-          "lessons": 32,
-          "themes": 8,
-          "lessonMinutes": 480,
-          "theoryMinutes": 163,
-          "minutes": 643
+          "lessons": 20,
+          "themes": 9,
+          "lessonMinutes": 200,
+          "theoryMinutes": 35,
+          "minutes": 235
         },
         {
-          "id": 21,
-          "name": "11 Клас - Від репресій до незалежності. Падіння імперії та творення нової України",
+          "id": 1391,
+          "name": "Руські удільні князівства у складі іноземних держав у другій половині XIV - першій половині XVI ст. Кримське ханство · 7 клас",
           "sort": 5,
-          "lessons": 17,
-          "themes": 5,
-          "lessonMinutes": 255,
-          "theoryMinutes": 55,
+          "lessons": 28,
+          "themes": 12,
+          "lessonMinutes": 280,
+          "theoryMinutes": 44,
+          "minutes": 324
+        },
+        {
+          "id": 1392,
+          "name": "Українські землі у складі Речі Посполитої в другій половині XVI ст. · 8 клас",
+          "sort": 6,
+          "lessons": 22,
+          "themes": 9,
+          "lessonMinutes": 220,
+          "theoryMinutes": 33,
+          "minutes": 253
+        },
+        {
+          "id": 1393,
+          "name": "Українські землі у складі Речі Посполитої в першій половині XVII ст. · 8 клас",
+          "sort": 7,
+          "lessons": 24,
+          "themes": 11,
+          "lessonMinutes": 240,
+          "theoryMinutes": 41,
+          "minutes": 281
+        },
+        {
+          "id": 1394,
+          "name": "Національно-визвольна війна українського народу середини XVII ст. · 8 клас",
+          "sort": 8,
+          "lessons": 27,
+          "themes": 12,
+          "lessonMinutes": 270,
+          "theoryMinutes": 46,
+          "minutes": 316
+        },
+        {
+          "id": 1395,
+          "name": "Козацька Україна наприкінці 50 - у 80-х рр. XVII ст. · 8 клас",
+          "sort": 9,
+          "lessons": 27,
+          "themes": 12,
+          "lessonMinutes": 270,
+          "theoryMinutes": 54,
+          "minutes": 324
+        },
+        {
+          "id": 1396,
+          "name": "Українські землі наприкінці XVII - в першій половині XVIII ст. · 8 клас",
+          "sort": 10,
+          "lessons": 26,
+          "themes": 11,
+          "lessonMinutes": 260,
+          "theoryMinutes": 50,
           "minutes": 310
         },
         {
-          "id": 22,
+          "id": 1397,
+          "name": "Українські землі в другій половині XVIII ст. · 8 клас",
+          "sort": 11,
+          "lessons": 26,
+          "themes": 11,
+          "lessonMinutes": 260,
+          "theoryMinutes": 43,
+          "minutes": 303
+        },
+        {
+          "id": 1398,
+          "name": "Українські землі у складі Російської імперії наприкінці XVIII - в першій половині XIX ст. · 9 клас",
+          "sort": 12,
+          "lessons": 21,
+          "themes": 9,
+          "lessonMinutes": 210,
+          "theoryMinutes": 39,
+          "minutes": 249
+        },
+        {
+          "id": 1399,
+          "name": "Українські землі у складі Австрійської імперії наприкінці XVIII - в першій половині XIX ст. · 9 клас",
+          "sort": 13,
+          "lessons": 14,
+          "themes": 6,
+          "lessonMinutes": 140,
+          "theoryMinutes": 27,
+          "minutes": 167
+        },
+        {
+          "id": 1400,
+          "name": "Культура України кінця XVIII - першої половини XIX ст. · 9 клас",
+          "sort": 14,
+          "lessons": 9,
+          "themes": 4,
+          "lessonMinutes": 90,
+          "theoryMinutes": 17,
+          "minutes": 107
+        },
+        {
+          "id": 1401,
+          "name": "Українські землі у складі Російської імперії в другій половині XIX ст. · 9 клас",
+          "sort": 15,
+          "lessons": 28,
+          "themes": 12,
+          "lessonMinutes": 280,
+          "theoryMinutes": 50,
+          "minutes": 330
+        },
+        {
+          "id": 1402,
+          "name": "Українські землі у складі Австро-Угорщини в другій половині XIX ст. · 9 клас",
+          "sort": 16,
+          "lessons": 14,
+          "themes": 6,
+          "lessonMinutes": 140,
+          "theoryMinutes": 26,
+          "minutes": 166
+        },
+        {
+          "id": 1403,
+          "name": "Культура України в другій половині XIX - на початку XX ст. · 9 клас",
+          "sort": 17,
+          "lessons": 11,
+          "themes": 4,
+          "lessonMinutes": 110,
+          "theoryMinutes": 18,
+          "minutes": 128
+        },
+        {
+          "id": 1404,
+          "name": "Українські землі у складі Російської імперії в 1900-1914 рр. · 9 клас",
+          "sort": 18,
+          "lessons": 30,
+          "themes": 14,
+          "lessonMinutes": 300,
+          "theoryMinutes": 61,
+          "minutes": 361
+        },
+        {
+          "id": 1405,
+          "name": "Українські землі у складі Австро-Угорщини в 1900-1914 рр. · 9 клас",
+          "sort": 19,
+          "lessons": 12,
+          "themes": 6,
+          "lessonMinutes": 120,
+          "theoryMinutes": 24,
+          "minutes": 144
+        },
+        {
+          "id": 1406,
+          "name": "Україна в роки Першої світової війни · 10 клас",
+          "sort": 20,
+          "lessons": 20,
+          "themes": 8,
+          "lessonMinutes": 200,
+          "theoryMinutes": 36,
+          "minutes": 236
+        },
+        {
+          "id": 1407,
+          "name": "Початок Української революції · 10 клас",
+          "sort": 21,
+          "lessons": 33,
+          "themes": 14,
+          "lessonMinutes": 330,
+          "theoryMinutes": 61,
+          "minutes": 391
+        },
+        {
+          "id": 1408,
+          "name": "Розгортання Української революції. Боротьба за відновлення державності · 10 клас",
+          "sort": 22,
+          "lessons": 58,
+          "themes": 25,
+          "lessonMinutes": 580,
+          "theoryMinutes": 106,
+          "minutes": 686
+        },
+        {
+          "id": 1409,
+          "name": "Встановлення комуністичного тоталітарного режиму в Україні · 10 клас",
+          "sort": 23,
+          "lessons": 23,
+          "themes": 10,
+          "lessonMinutes": 230,
+          "theoryMinutes": 44,
+          "minutes": 274
+        },
+        {
+          "id": 1410,
+          "name": "Утвердження більшовицького тоталітарного режиму в Україні · 10 клас",
+          "sort": 24,
+          "lessons": 31,
+          "themes": 13,
+          "lessonMinutes": 310,
+          "theoryMinutes": 53,
+          "minutes": 363
+        },
+        {
+          "id": 1411,
+          "name": "Західна Україна в 1921-1939 рр. · 10 клас",
+          "sort": 25,
+          "lessons": 26,
+          "themes": 12,
+          "lessonMinutes": 260,
+          "theoryMinutes": 49,
+          "minutes": 309
+        },
+        {
+          "id": 1412,
+          "name": "Україна в роки Другої світової війни · 10 клас",
+          "sort": 26,
+          "lessons": 47,
+          "themes": 20,
+          "lessonMinutes": 470,
+          "theoryMinutes": 89,
+          "minutes": 559
+        },
+        {
+          "id": 1413,
+          "name": "Україна в перші повоєнні роки · 10 клас",
+          "sort": 27,
+          "lessons": 19,
+          "themes": 8,
+          "lessonMinutes": 190,
+          "theoryMinutes": 36,
+          "minutes": 226
+        },
+        {
+          "id": 1414,
+          "name": "Україна в умовах десталінізації · 11 клас",
+          "sort": 28,
+          "lessons": 23,
+          "themes": 10,
+          "lessonMinutes": 230,
+          "theoryMinutes": 44,
+          "minutes": 274
+        },
+        {
+          "id": 1415,
+          "name": "Україна в період загострення кризи радянської системи · 11 клас",
+          "sort": 29,
+          "lessons": 23,
+          "themes": 10,
+          "lessonMinutes": 230,
+          "theoryMinutes": 43,
+          "minutes": 273
+        },
+        {
+          "id": 1416,
+          "name": "Відновлення незалежності України · 11 клас",
+          "sort": 30,
+          "lessons": 24,
+          "themes": 11,
+          "lessonMinutes": 240,
+          "theoryMinutes": 46,
+          "minutes": 286
+        },
+        {
+          "id": 1417,
+          "name": "Становлення України як незалежної держави · 11 клас",
+          "sort": 31,
+          "lessons": 19,
+          "themes": 8,
+          "lessonMinutes": 190,
+          "theoryMinutes": 37,
+          "minutes": 227
+        },
+        {
+          "id": 1418,
+          "name": "Творення нової України · 11 клас",
+          "sort": 32,
+          "lessons": 26,
+          "themes": 11,
+          "lessonMinutes": 260,
+          "theoryMinutes": 48,
+          "minutes": 308
+        },
+        {
+          "id": 1419,
           "name": "Тренажер (Персоналії)",
-          "sort": 6,
+          "sort": 33,
           "lessons": 7,
           "themes": 1,
           "lessonMinutes": 84,
@@ -288,9 +563,9 @@ export const WORKLOAD = {
           "minutes": 99
         },
         {
-          "id": 23,
+          "id": 1420,
           "name": "Тренажери (Усі споруди)",
-          "sort": 7,
+          "sort": 34,
           "lessons": 16,
           "themes": 3,
           "lessonMinutes": 192,
@@ -298,9 +573,9 @@ export const WORKLOAD = {
           "minutes": 203
         },
         {
-          "id": 24,
+          "id": 1421,
           "name": "Тренажери (Усе мистецтво)",
-          "sort": 8,
+          "sort": 35,
           "lessons": 14,
           "themes": 3,
           "lessonMinutes": 168,
@@ -308,9 +583,9 @@ export const WORKLOAD = {
           "minutes": 183
         },
         {
-          "id": 25,
+          "id": 1422,
           "name": "Тренажери (Усі дати)",
-          "sort": 9,
+          "sort": 36,
           "lessons": 25,
           "themes": 5,
           "lessonMinutes": 300,
@@ -318,16 +593,22 @@ export const WORKLOAD = {
           "minutes": 325
         },
         {
-          "id": 71,
+          "id": 1423,
           "name": "Аналіз НМТ минулих років / Інтенсив",
-          "sort": 10,
+          "sort": 37,
           "lessons": 12,
           "themes": 4,
           "lessonMinutes": 120,
           "theoryMinutes": 22,
           "minutes": 142
         }
-      ]
+      ],
+      "exams": {
+        "count": 11,
+        "minutesEach": 60,
+        "minutes": 660,
+        "status": "OBSERVED native final delivery verification 2026-11-06; read-only course_lessons projection does not expose exam duration"
+      }
     },
     "literature": {
       "courseId": 12,
@@ -768,5 +1049,46 @@ export const WORKLOAD = {
       ]
     }
   },
-  "sectionObservedAt": "2026-11-02T12:26:49.468Z"
+  "sectionObservedAt": "2026-11-02T12:26:49.468Z",
+  "baselineObservedAt": "2026-11-02T11:27:31.007Z",
+  "nativeSetup": {
+    "version": "nmt-native-setup-2026-11-06",
+    "observedAt": "2026-11-06T14:38:51.122425+02:00",
+    "quotaStatus": "planning model; owner observed NMT history 40 minutes -> 2 ordinary lessons; other NMT thresholds require app counter verification",
+    "nominalMinutesPerLesson": 20,
+    "ownerObserved": {
+      "subject": "history",
+      "minutes": 40,
+      "dailyLessons": 2
+    },
+    "courseNames": {
+      "ukrainian": "Українська мова 🇺🇦",
+      "math": "Математика 🔢",
+      "english": "English 🇬🇧",
+      "history": "Історія України 2.0 ✨",
+      "literature": "Література📚",
+      "german": "Deutsch🇩🇪",
+      "biology": "Біологія🧬",
+      "geography": "Географія🌏",
+      "physics": "Фізика💡",
+      "chemistry": "Хімія🧪"
+    },
+    "ambitions": [
+      "190–200",
+      "180–190",
+      "170–180",
+      "150–170",
+      "115–150"
+    ],
+    "historyPresets": [
+      {
+        "minutes": 40,
+        "days": 5
+      },
+      {
+        "minutes": 35,
+        "days": 6
+      }
+    ]
+  }
 };

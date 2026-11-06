@@ -63,7 +63,10 @@ export function restoreState(raw, now = new Date()) {
     const obsoleteYear=!examYears(now).some(option=>option.year===state.examYear);
     if(obsoleteYear){state.examYear=fallback.examYear;state.end=fallback.end;state.step=Math.min(state.step,2);state.overrides={};}
     if(migrated)state.step=Math.min(state.step,2);
-    if (s.workload !== WORKLOAD.version) state.step = Math.min(state.step, 2);
+    if (s.workload !== WORKLOAD.version) {
+      state.step = Math.min(state.step, 2);
+      state.overrides = {};
+    }
     // Expired drafts remain editable, but cannot skip the date review.
     if (state.end < dateKey(now) || state.start < dateKey(now)) state.step = Math.min(state.step, 2);
     if (!state.selected.length) state.step = 1;
@@ -168,6 +171,41 @@ export function buildPlan(state, now = new Date(), options={}) {
 export function recommendRhythm(state, now = new Date()) {
   const options=recommendRhythms(state,now);
   return options.find(option=>option.id===state.preferredProfile&&option.feasible)||options.find(option=>option.feasible)||null;
+}
+// This models the app's daily goal, not the measured duration of a lesson.
+// NMT history 40 -> 2 is owner-observed; verify other thresholds in the app.
+export function nativeSetup(state, now = new Date()) {
+  const error = validate(state, 3, now);
+  if (error) return {error, courses: [], compatible: false};
+  const courseEnd = addDays(state.end, -state.reserve - 1);
+  const weekdays = state.days.flatMap((day, i) => day.enabled ? [i] : []);
+  const dates = [];
+  for (let date = state.start; date <= courseEnd; date = addDays(date, 1)) {
+    const day = (new Date(`${date}T12:00:00`).getDay() + 6) % 7;
+    if (weekdays.includes(day) && !(date === dateKey(now) && timeMinutes(state.days[day].start) <= now.getHours() * 60 + now.getMinutes())) dates.push(date);
+  }
+  const unit = WORKLOAD.nativeSetup.nominalMinutesPerLesson;
+  const courses = state.selected.map(subject => {
+    const course = WORKLOAD.subjects[subject];
+    const requiredDailyLessons = dates.length ? Math.ceil(course.lessons / dates.length) : null;
+    const values = [];
+    for (let minutes = course.min; minutes <= course.max; minutes += course.step) values.push(minutes);
+    const maxMinutes = values.at(-1);
+    const maxDailyLessons = Math.ceil(maxMinutes / unit);
+    const candidates = requiredDailyLessons ? values.filter(m => Math.ceil(m / unit) >= requiredDailyLessons) : [];
+    // Prefer the unambiguous 20-minute boundary when the current grid permits it.
+    const minutes = candidates.includes(requiredDailyLessons * unit) ? requiredDailyLessons * unit : candidates.at(-1);
+    const compatible = Number.isFinite(minutes);
+    const expectedDailyLessons = compatible ? Math.ceil(minutes / unit) : maxDailyLessons;
+    const finish = dates[Math.ceil(course.lessons / expectedDailyLessons) - 1] || null;
+    return {subject, name: WORKLOAD.nativeSetup.courseNames[subject], courseId:course.courseId,
+      lessons:course.lessons, weekdays:[...weekdays], studyDates:dates.length, courseEnd,
+      requiredDailyLessons, minutes:compatible?minutes:null, maxMinutes,maxDailyLessons,
+      expectedDailyLessons, compatible, finish,
+      lessonDeficit:Math.max(0,course.lessons-dates.length*maxDailyLessons),
+      requiredFieldMinutes:requiredDailyLessons?requiredDailyLessons*unit:null};
+  });
+  return {error:null,courseEnd,weekdays,studyDates:dates.length,courses,compatible:courses.every(c=>c.compatible)};
 }
 export const PACE_PROFILES=[
   {id:'balanced',name:'Збалансовано',description:'Два вільні дні на тиждень',weekdays:[0,1,2,3,4]},

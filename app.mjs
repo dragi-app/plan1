@@ -1,4 +1,4 @@
-import {SUBJECTS, SESSION_OPTIONS, examYears, recommendRhythms, subjectMilestones, defaultState, restoreState, validate, buildPlan, recommendRhythm, makeICS, dateKey, addDays, monday, timeText, validDate} from './engine.mjs';
+import {SUBJECTS, SESSION_OPTIONS, examYears, recommendRhythms, subjectMilestones, nativeSetup, defaultState, restoreState, validate, buildPlan, recommendRhythm, makeICS, dateKey, addDays, monday, timeText, validDate} from './engine.mjs';
 import {translate} from './i18n.mjs';
 import {WORKLOAD} from './workload.mjs';
 
@@ -18,6 +18,8 @@ let week = monday(state.start);
 let resetOpen = false;
 let toast = '';
 let toastTimer;
+let setupAudience = 'new';
+let setupSubject = '';
 const t = key => translate(state.locale, key);
 const esc = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 const path = {
@@ -40,6 +42,12 @@ function duration(minutes) {
   return `${h ? `${h} ${t('hoursUnit')}` : ''}${h && m ? ' ' : ''}${m || !h ? `${m} ${t('minutesUnit')}` : ''}`;
 }
 function names() { return t('subjectNames'); }
+function courseExtraNote(id) {
+  const extras = WORKLOAD.subjects[id].unestimatedActivities;
+  if (!extras) return '';
+  const note = t('historyExtras').replace('{calibrations}', extras.calibrations).replace('{exams}', WORKLOAD.subjects[id].exams?.count || 0);
+  return `<p class="hint course-extras">${esc(note)}</p>`;
+}
 function countText(count, kind) {const forms=t(kind+'Forms');return `${count} ${esc(forms[new Intl.PluralRules(state.locale).select(count)]||forms.other)}`;}
 function requiredMinutes() { return state.selected.reduce((sum,id) => sum+WORKLOAD.subjects[id].minutes,0); }
 function lessons() { return state.selected.reduce((sum,id) => sum+WORKLOAD.subjects[id].lessons,0); }
@@ -68,6 +76,7 @@ function subjectsPage() {
 <span class="check">${icon('check')}</span>
 </button>`).join('')}</div>
 <p class="hint">${esc(t('timeBased'))}</p>
+${state.selected.map(courseExtraNote).join('')}
 </section>`;
 }
 function datesPage() {
@@ -86,7 +95,7 @@ function datesPage() {
   ${programOutline()}`;
 }
 function programOutline(){
-  return `<section class="section"><h2>${esc(t('coursework'))}</h2><p class="section-lead">Реальні розділи обраних курсів Dragi.</p><div class="program-outline">${state.selected.map(id=>`<details style="${color(id)}"><summary>${subjectIcon(id)}<span>${esc(names()[id])}<small>${countText(WORKLOAD.subjects[id].lessons,'lesson')} · ${duration(WORKLOAD.subjects[id].minutes)}</small></span></summary><ol>${WORKLOAD.subjects[id].sections.map(section=>`<li><span>${esc(section.name)}</span><small>${section.minutes?`${countText(section.lessons,'lesson')} · ${duration(section.minutes)}`:esc(t('noContent'))}</small></li>`).join('')}</ol></details>`).join('')}</div></section>`;
+  return `<section class="section"><h2>${esc(t('coursework'))}</h2><p class="section-lead">Реальні розділи обраних курсів Dragi.</p><div class="program-outline">${state.selected.map(id=>`<details style="${color(id)}"><summary>${subjectIcon(id)}<span>${esc(names()[id])}<small>${countText(WORKLOAD.subjects[id].lessons,'lesson')} · ${duration(WORKLOAD.subjects[id].minutes)}</small></span></summary><ol>${WORKLOAD.subjects[id].sections.map(section=>`<li><span>${esc(section.name)}</span><small>${section.minutes?`${countText(section.lessons,'lesson')} · ${duration(section.minutes)}`:esc(t('noContent'))}</small></li>`).join('')}</ol></details>`).join('')}</div>${state.selected.map(courseExtraNote).join('')}</section>`;
 }
 function paceProfiles(){
   const profiles=recommendRhythms(state);
@@ -98,7 +107,7 @@ function paceProfiles(){
 function subjectRoadmap(plan){
   if(plan.error)return '';
   const rows=subjectMilestones(state,plan);
-  return `<section class="section subject-roadmap"><h2>${esc(t('roadmapTitle'))}</h2><p class="section-lead">${esc(t('roadmapLead'))}</p><div class="route-cards">${rows.map((row,index)=>`<article class="route-card" style="${color(row.subject)}"><header>${subjectIcon(row.subject)}<div><h3>${esc(names()[row.subject])}</h3><p>${countText(row.lessons,'lesson')} · ${duration(row.minutes)}</p></div></header><div class="route-metrics"><div><strong>${duration(row.weeklyMinutes)}</strong><small>${esc(t('weeklyAverage'))}</small></div><div><strong>${row.finish?formatDate(row.finish):'Потрібно більше часу'}</strong><small>${esc(t('byDate'))}</small></div></div><p class="strip-caption">Розподіл обсягу за розділами</p><div class="section-strip" role="img" aria-label="Послідовність розділів ${esc(names()[row.subject])}">${row.sections.filter(section=>section.minutes).map((section,i)=>`<span style="flex-grow:${section.minutes};opacity:${.4+(i%4)*.18}" title="${esc(section.name)} · ${duration(section.minutes)}"></span>`).join('')}</div>${row.deficit?`<p class="route-deficit">Не вміщується ${duration(row.deficit)}</p>`:`<p class="route-complete">${icon('check')}Усі уроки й теорія в плані</p>`}<details ${state.step===4&&index===0?'open':''}><summary>${esc(t('sectionsLabel'))}<span>${row.sections.filter(section=>section.minutes).length}</span></summary><ol class="milestones">${row.sections.map((section,i)=>`<li class="${section.minutes?'':'empty-stage'}"><span class="milestone-number">${i+1}</span><div><strong>${esc(section.name)}</strong><small>${section.minutes?`${countText(section.lessons,'lesson')} · ${duration(section.minutes)}`:esc(t('noContent'))}</small></div>${section.minutes?`<time datetime="${section.finish||''}" title="${section.finish?formatDate(section.finish,true):esc(t('notScheduled'))}">${section.finish?'до '+formatDate(section.finish):'Не вміщується'}</time>`:''}</li>`).join('')}</ol></details></article>`).join('')}</div><p class="hint">${esc(t('milestoneNote'))}</p></section>`;
+  return `<section class="section subject-roadmap"><h2>${esc(t('roadmapTitle'))}</h2><p class="section-lead">${esc(t('roadmapLead'))}</p><div class="route-cards">${rows.map((row,index)=>`<article class="route-card" style="${color(row.subject)}"><header>${subjectIcon(row.subject)}<div><h3>${esc(names()[row.subject])}</h3><p>${countText(row.lessons,'lesson')} · ${countText(WORKLOAD.subjects[row.subject].themes,'theme')} · ${duration(row.minutes)}</p></div></header><div class="route-metrics"><div><strong>${duration(row.weeklyMinutes)}</strong><small>${esc(t('weeklyAverage'))}</small></div><div><strong>${row.finish?formatDate(row.finish):'Потрібно більше часу'}</strong><small>${esc(t('byDate'))}</small></div></div><p class="strip-caption">Розподіл обсягу за розділами</p><div class="section-strip" role="img" aria-label="Послідовність розділів ${esc(names()[row.subject])}">${row.sections.filter(section=>section.minutes).map((section,i)=>`<span style="flex-grow:${section.minutes};opacity:${.4+(i%4)*.18}" title="${esc(section.name)} · ${duration(section.minutes)}"></span>`).join('')}</div>${row.deficit?`<p class="route-deficit">Не вміщується ${duration(row.deficit)}</p>`:`<p class="route-complete">${icon('check')}Усі уроки й теорія в плані</p>`}${courseExtraNote(row.subject)}<details ${state.step===4&&index===0?'open':''}><summary>${esc(t('sectionsLabel'))}<span>${row.sections.filter(section=>section.minutes).length}</span></summary><ol class="milestones">${row.sections.map((section,i)=>`<li class="${section.minutes?'':'empty-stage'}"><span class="milestone-number">${i+1}</span><div><strong>${esc(section.name)}</strong><small>${section.minutes?`${countText(section.lessons,'lesson')} · ${duration(section.minutes)}`:esc(t('noContent'))}</small></div>${section.minutes?`<time datetime="${section.finish||''}" title="${section.finish?formatDate(section.finish,true):esc(t('notScheduled'))}">${section.finish?'до '+formatDate(section.finish):'Не вміщується'}</time>`:''}</li>`).join('')}</ol></details></article>`).join('')}</div><p class="hint">${esc(t('milestoneNote'))}</p></section>`;
 }
 function paceStatus(plan, compact = false) {
   if (plan.error) return '';
@@ -145,7 +154,7 @@ function rhythmPage() {
 <select id="minutes-${i}" name="dayMinutes" data-day="${i}" aria-label="${esc(t('dayNames')[i]+' · '+t('availableTime'))}">${[20,30,45,60,90,120,150,180,240].map(n=>`<option value="${n}" ${day.minutes===n?'selected':''}>${n} ${esc(t('minutesUnit'))}</option>`).join('')}</select>
 </label>`:`<span class="rest-text">${esc(t('rest'))}</span>`}</div>`).join('')}</div>
 <p class="hint">${esc(t('restNote'))}</p>
-</section>${paceStatus(plan,true)}${subjectRoadmap(plan)}${!plan.error?`<div class="weekly-strip">
+</section>${paceStatus(plan,true)}${nativeCompatibility(plan)}${subjectRoadmap(plan)}${!plan.error?`<div class="weekly-strip">
 <strong>${duration(weekly.reduce((sum,e)=>sum+e.minutes,0))}</strong>
 <span>${esc(t('firstWeek'))}<br>${esc(t('breaksIncluded'))}</span>
 </div>`:''}`;
@@ -169,6 +178,40 @@ function storeLinks(){return `<div class="store-links">
 </div>
 <p>${esc(t('transferHint'))}</p>
 </div>`;}
+function nativeCompatibility(plan) {
+  if (plan.error || !plan.feasible) return '';
+  const setup = nativeSetup(state);
+  if (setup.compatible) return '';
+  return `<aside class="native-gap" role="status"><span class="setup-step-icon">${icon('info')}</span><div><strong>Календар часу готовий. Перевір денні цілі Dragi.</strong><p>${setup.courses.filter(c=>!c.compatible).map(c=>`${esc(names()[c.subject])}: потрібно щонайменше ${c.requiredDailyLessons?countText(c.requiredDailyLessons,'lesson'):'—'} за навчальний день. Поточна межа ${c.maxMinutes} хв у налаштуваннях дає за плановою моделлю до ${c.maxDailyLessons}.`).join(' ')}</p><p>Для цього ритму автоматична денна ціль може бути замалою. Обери більше навчальних днів або наступний рік НМТ.</p><div class="setup-gap-actions"><button type="button" class="text-button" data-action="setupDaily">Спробувати 7 днів на тиждень ${icon('arrow')}</button>${state.examYear===examYears()[0].year?`<button type="button" class="text-button" data-action="nextExamYear">Обрати НМТ ${examYears()[1].year} ${icon('arrow')}</button>`:''}</div></div></aside>`;
+}
+function nativeGuide(plan) {
+  const setup = nativeSetup(state);
+  if (setup.error) return '';
+  if (!state.selected.includes(setupSubject)) setupSubject=state.selected[0];
+  const course=setup.courses.find(c=>c.subject===setupSubject);
+  const shortDays=t('shortDays');
+  const yearLabel=state.examYear===examYears()[0].year?'Цей рік':'Наступний';
+  const courseNames=WORKLOAD.nativeSetup.courseNames;
+  return `<section class="native-guide section" id="dragi-setup" aria-labelledby="setup-title">
+<div class="setup-heading"><div><p class="eyebrow">ВІД КАЛЕНДАРЯ — ДО ЗАНЯТЬ</p><h2 id="setup-title">Тепер налаштуй свій Dragi</h2><p class="section-lead">Календар нагадає, коли вчитися. А графік у застосунку потрібно налаштувати окремо — для кожного обраного предмета.</p></div><span class="setup-heading-icon">${icon('book')}</span></div>
+<div class="setup-audience" role="group" aria-label="Твій досвід у Dragi"><button type="button" data-action="setupAudience" data-value="new" aria-pressed="${setupAudience==='new'}">Я вперше в Dragi</button><button type="button" data-action="setupAudience" data-value="existing" aria-pressed="${setupAudience==='existing'}">Уже маю акаунт</button></div>
+<div class="setup-entry-steps ${setupAudience==='existing'?'existing':''}">
+${setupAudience==='new'?`<article class="setup-entry"><span class="setup-number">1</span><div><h3>Встанови Dragi</h3><p>Обери магазин свого телефона та завантаж застосунок.</p>${storeLinks()}</div></article><article class="setup-entry"><span class="setup-number">2</span><div><h3>Обери українську й НМТ</h3><p>Під час першого запуску обери українську мову та підготовку до НМТ. Введи ім’я й електронну пошту та заверши реєстрацію за підказками застосунку.</p></div></article>`:`<article class="setup-entry"><span class="setup-number">1</span><div><h3>Відкрий свій акаунт</h3><p>Зайди у Dragi та відкрий підготовку до НМТ. Повторно реєструватися не потрібно.</p></div></article>`}
+<article class="setup-entry"><span class="setup-number">${setupAudience==='new'?3:2}</span><div><h3>Натисни назву предмета вгорі</h3><p>У списку предметів обери потрібний курс. Для історії шукай саме <strong>«Історія України 2.0 ✨»</strong>. Якщо графік курсу ще не налаштований, відкриються два екрани нижче. Якщо він уже збережений, звір його параметри з цією карткою.</p></div></article>
+</div>
+<div class="setup-personal"><div class="setup-personal-heading"><div><span class="setup-kicker">ТВОЇ ПАРАМЕТРИ</span><h3>Що обрати на двох екранах</h3></div><label class="field"><span>Курс у застосунку</span><select id="setup-subject" name="setupSubject">${state.selected.map(id=>`<option value="${id}" ${id===setupSubject?'selected':''}>${esc(courseNames[id])}</option>`).join('')}</select></label></div>
+<div class="setup-course-pills" aria-label="Перевірити параметри предметів">${state.selected.map(id=>`<button type="button" data-action="setupSubject" data-value="${id}" aria-pressed="${id===setupSubject}" style="${color(id)}">${subjectIcon(id)}${esc(names()[id])}${setup.courses.find(c=>c.subject===id).compatible?'':icon('info')}</button>`).join('')}</div>
+<div class="setup-screen-grid">
+<article class="setup-screen"><header><span>ЕКРАН 1 / 2</span><strong>${esc(course.name)}</strong></header><div class="setup-screen-body"><div class="setup-field"><span>У якому навчальному році?</span><strong>${yearLabel} · НМТ ${state.examYear}</strong><small>Навчальний рік ${state.examYear-1}/${state.examYear}. Перевір, що обраний у Dragi рік закінчується саме в ${state.examYear}.</small></div><div class="setup-field"><span>На скільки балів хочеш скласти?</span><strong>Обери свою ціль</strong><div class="setup-ambitions">${WORKLOAD.nativeSetup.ambitions.map(label=>`<span>${esc(label)}</span>`).join('')}</div><small>Обери власну амбіцію. Цей календар охоплює повний курс за будь-якої цілі й не гарантує певного бала.</small></div><div class="setup-field"><span>Коли плануєш початок підготовки?</span><strong>${formatDate(state.start,true)}</strong><small>Вкажи ту саму дату, що у своєму календарі.</small></div><div class="setup-next">Натисни «Продовжити» ${icon('arrow')}</div></div></article>
+<article class="setup-screen"><header><span>ЕКРАН 2 / 2</span><strong>Час і дні навчання</strong></header><div class="setup-screen-body"><div class="setup-field"><span>Час навчання · саме для цього курсу</span>${course.compatible?`<strong class="setup-minutes">${course.minutes} <small>хвилин</small></strong><small>У поле «Час навчання» введи ${course.minutes} хв. Перерви та час інших предметів сюди не додавай.</small>`:`<strong class="setup-limit">За цих днів поточної межі замало</strong><small>У застосунку доступно до ${course.maxMinutes} хв. Для всіх ${course.lessons} уроків до ${formatDate(setup.courseEnd)} потрібно щонайменше ${course.requiredDailyLessons?countText(course.requiredDailyLessons,'lesson'):'—'} за навчальний день.</small>`}</div><div class="setup-field"><span>Дні навчання</span><div class="setup-weekdays">${shortDays.map((day,i)=>`<span class="${course.weekdays.includes(i)?'selected':''}" aria-label="${esc(t('dayNames')[i])}${course.weekdays.includes(i)?', обрати':', не обирати'}">${esc(day)}</span>`).join('')}</div><small>Познач ${course.weekdays.map(i=>shortDays[i]).join(', ')} — ${countText(course.weekdays.length,'day')} на тиждень. Для інших предметів повтори налаштування окремо.</small></div><div id="setup-daily-goal" class="setup-daily-goal ${course.compatible?'':'blocked'}"><span>${icon(course.compatible?'check':'info')}</span><div><strong>${course.compatible?`Після збереження перевір ціль: ${countText(course.expectedDailyLessons,'lesson')} на день`:`Потрібно ${course.requiredDailyLessons?countText(course.requiredDailyLessons,'lesson'):'—'} на день; очікувана межа — ${course.maxDailyLessons}`}</strong><p>${course.compatible?`Звір лічильник у щоденному плані Dragi. Потрібна ціль: щонайменше ${countText(course.requiredDailyLessons,'lesson')} за навчальний день. Якщо лічильник менший, цей графік ще не узгоджений із застосунком.`:'Не вводь загальний час усіх предметів у поле цього курсу та не копіюй замалу рекомендацію. Спочатку зміни ритм або рік у планері.'}</p></div></div></div></article>
+</div>
+${nativeCompatibility(plan)}
+<p class="setup-model-note">Час у календарі — оцінка уроків і теорії. Поле часу в Dragi задає денну ціль в уроках, тому цифри можуть відрізнятися. Для підбору використано плановий орієнтир 20 хв на звичайний урок; після збереження обов’язково звір денний лічильник у застосунку.</p>
+${setupSubject==='history'?`<details class="setup-explainer"><summary>Чому тут може бути інше значення, ніж у рекомендації Dragi?</summary><p>Поточний курс пропонує 40 хв × 5 днів або 35 хв × 6 днів. За підтвердженої цілі 2 уроки на день для всіх 869 уроків знадобиться щонайменше 435 навчальних днів — 87 тижнів при 5 днях на тиждень. Наш підбір перевіряє повний обсяг курсу до твоєї дати; пресет у застосунку потрібно звіряти з ним.</p></details>`:''}
+</div>
+<div class="setup-finish"><span class="setup-number">✓</span><div><h3>Повтори для кожного предмета — і починай</h3><p>Перевір курс, навчальний рік, дату початку, хвилини, позначені дні та денну ціль. Далі відкривай звичайні уроки за своїм графіком, а резерв залиш на калібрування, повторення й пробні іспити.</p></div></div>
+</section>`;
+}
 function resultPage(plan) {
   const first = monday(state.start), last = monday(state.end);
   if (week<first || week>last) week=first;
@@ -192,6 +235,8 @@ function resultPage(plan) {
 </div>
 </div>
 </div>
+<nav class="setup-flow-nav" aria-label="Що робити з готовим планом"><a href="#save-plan"><span>1</span><strong>Збережи календар</strong><small>Нагадування про заняття</small></a><a href="#dragi-setup"><span>2</span><strong>Налаштуй Dragi</strong><small>Курс, час і дні навчання</small></a><a href="#setup-daily-goal"><span>3</span><strong>Перевір денну ціль</strong><small>Уроки мають вміститися до НМТ</small></a></nav>
+${nativeCompatibility(plan)}
 <section class="calendar-panel" aria-label="${esc(t('planStep'))}">
 <div class="calendar-toolbar">
 <div class="week-controls">
@@ -209,7 +254,6 @@ function resultPage(plan) {
 </div>`}</section>`;}).join('')}</div>
 <p class="calendar-note">${icon('info')}${esc(t('editHint'))}</p>
 </section>
-${subjectRoadmap(plan)}
 <div class="result-bottom">
 <section class="totals">
 <h2>${esc(t('subjectTotals'))}</h2>${state.selected.map(id=>`<div class="total-row" style="${color(id)}">
@@ -220,7 +264,7 @@ ${subjectRoadmap(plan)}
 </div>${plan.remaining[id]>0?`<p class="remaining-line">${duration(plan.remaining[id])} ${esc(t('remaining'))}</p>`:''}`).join('')}<p class="hint">${esc(t('review'))}: ${duration(plan.reviewMinutes)}</p>
 <p class="hint">${esc(t('timeBased'))}</p>
 </section>
-<section class="save-panel">
+<section class="save-panel" id="save-plan">
 <h2>${esc(t('saveTitle'))}</h2>
 <p>${esc(t('saveLead'))}</p>
 <label class="field">
@@ -234,8 +278,10 @@ ${subjectRoadmap(plan)}
 <details>
 <summary>${esc(t('importHelp'))}</summary>
 <p>${esc(t('importInstructions'))}</p>
-</details>${storeLinks()}</section>
+</details><a class="setup-jump" href="#dragi-setup">Далі — налаштувати графік у Dragi ${icon('arrow')}</a></section>
 </div>
+${nativeGuide(plan)}
+${subjectRoadmap(plan)}
 <div class="result-actions">
 <button type="button" class="secondary" data-action="rhythm">${icon('back')}${esc(t('changeRhythm'))}</button>
 <button type="button" class="text-button" data-action="reset">${esc(t('reset'))}</button>
@@ -345,6 +391,7 @@ root.addEventListener('change',event=>{
     else if(el.name==='dayMinutes') day.minutes=Number(el.value);
     clearOverrides();
   } else if(el.dataset.slot && state.selected.includes(el.value)) state.overrides[el.dataset.slot]=el.value;
+  else if(el.name==='setupSubject' && state.selected.includes(el.value)) setupSubject=el.value;
   error='';banner='';render({focusId});
 });
 root.addEventListener('click',event=>{
@@ -362,6 +409,9 @@ root.addEventListener('click',event=>{
   else if(action==='session') {state.session=Number(button.dataset.value);state.paceMode='custom';clearOverrides();}
   else if(action==='daysPreset') {const days={weekdays:[0,1,2,3,4],threeDays:[0,2,4],weekend:[5,6]}[button.dataset.value];state.days.forEach((d,i)=>{d.enabled=days.includes(i);});state.paceMode='custom';clearOverrides();}
   else if(action==='profile') {const profile=recommendRhythms(state).find(p=>p.id===button.dataset.value&&p.feasible);if(profile)state=profile.state;}
+  else if(action==='setupAudience' && ['new','existing'].includes(button.dataset.value)) setupAudience=button.dataset.value;
+  else if(action==='setupSubject' && state.selected.includes(button.dataset.value)) setupSubject=button.dataset.value;
+  else if(action==='setupDaily') {const profile=recommendRhythms(state).find(p=>p.id==='daily'&&p.feasible);if(profile){state=profile.state;week=monday(state.start);}else return go(3);}
   else if(action==='examYear'||action==='may20'||action==='nextExamYear'){const year=action==='nextExamYear'?examYears()[1].year:action==='may20'?state.examYear:Number(button.dataset.value);if(examYears().some(option=>option.year===year)){state.examYear=year;state.end=`${year}-05-20`;clearOverrides();}if(action==='nextExamYear')return go(2);}
   else if(action==='back')return go(state.step-1);
   else if(action==='step')return go(Number(button.dataset.value));
