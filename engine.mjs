@@ -1,4 +1,4 @@
-import {WORKLOAD} from './workload.mjs?v=e99e2bc101f0';
+import {WORKLOAD} from './workload.mjs?v=a2b58efd152e';
 export const SUBJECTS = ['ukrainian', 'math', 'history', 'english', 'literature', 'geography', 'chemistry', 'biology', 'physics', 'german'];
 export const LOCALES = ['uk'];
 export const SESSION_OPTIONS = [20, 25, 40, 50];

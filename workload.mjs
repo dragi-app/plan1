@@ -226,8 +226,8 @@ export const WORKLOAD = {
       "theoryMinutes": 1534,
       "minutes": 10348,
       "min": 10,
-      "max": 90,
-      "step": 5,
+      "max": 180,
+      "step": 10,
       "unestimatedActivities": {
         "calibrations": 363
       },
@@ -1052,8 +1052,8 @@ export const WORKLOAD = {
   "sectionObservedAt": "2026-11-02T12:26:49.468Z",
   "baselineObservedAt": "2026-11-02T11:27:31.007Z",
   "nativeSetup": {
-    "version": "nmt-native-setup-2026-11-06",
-    "observedAt": "2026-11-06T14:38:51.122425+02:00",
+    "version": "nmt-native-setup-2026-11-06-v2",
+    "observedAt": "2026-11-06T17:41:27.469269+02:00",
     "quotaStatus": "planning model; owner observed NMT history 40 minutes -> 2 ordinary lessons; other NMT thresholds require app counter verification",
     "nominalMinutesPerLesson": 20,
     "ownerObserved": {
@@ -1086,7 +1086,7 @@ export const WORKLOAD = {
         "days": 5
       },
       {
-        "minutes": 35,
+        "minutes": 40,
         "days": 6
       }
     ]

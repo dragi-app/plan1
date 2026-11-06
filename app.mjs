@@ -1,6 +1,6 @@
-import {SUBJECTS, SESSION_OPTIONS, examYears, recommendRhythms, subjectMilestones, nativeSetup, defaultState, restoreState, validate, buildPlan, recommendRhythm, makeICS, dateKey, addDays, monday, timeText, validDate} from './engine.mjs?v=32c8d4c3e23b';
+import {SUBJECTS, SESSION_OPTIONS, examYears, recommendRhythms, subjectMilestones, nativeSetup, defaultState, restoreState, validate, buildPlan, recommendRhythm, makeICS, dateKey, addDays, monday, timeText, validDate} from './engine.mjs?v=abf059444eb7';
 import {translate} from './i18n.mjs?v=e7d379b7d999';
-import {WORKLOAD} from './workload.mjs?v=e99e2bc101f0';
+import {WORKLOAD} from './workload.mjs?v=a2b58efd152e';
 
 const STORAGE_KEY = 'dragi-nmt-planning-v2';
 const IS_LOCAL = ['localhost','127.0.0.1','::1'].includes(location.hostname);
@@ -207,7 +207,7 @@ ${setupAudience==='new'?`<article class="setup-entry"><span class="setup-number"
 </div>
 ${nativeCompatibility(plan)}
 <p class="setup-model-note">Час у календарі — оцінка уроків і теорії. Поле часу в Dragi задає денну ціль в уроках, тому цифри можуть відрізнятися. Для підбору використано плановий орієнтир 20 хв на звичайний урок; після збереження обов’язково звір денний лічильник у застосунку.</p>
-${setupSubject==='history'?`<details class="setup-explainer"><summary>Чому тут може бути інше значення, ніж у рекомендації Dragi?</summary><p>Поточний курс пропонує 40 хв × 5 днів або 35 хв × 6 днів. За підтвердженої цілі 2 уроки на день для всіх 869 уроків знадобиться щонайменше 435 навчальних днів — 87 тижнів при 5 днях на тиждень. Наш підбір перевіряє повний обсяг курсу до твоєї дати; пресет у застосунку потрібно звіряти з ним.</p></details>`:''}
+${setupSubject==='history'?`<details class="setup-explainer"><summary>Чому тут може бути інше значення, ніж у рекомендації Dragi?</summary><p>Базові рекомендації курсу — ${WORKLOAD.nativeSetup.historyPresets.map(p=>`${p.minutes} хв × ${p.days} днів`).join(' або ')} на тиждень. За підтвердженої цілі 2 уроки на день для всіх ${course.lessons} уроків знадобиться щонайменше ${Math.ceil(course.lessons/WORKLOAD.nativeSetup.ownerObserved.dailyLessons)} навчальних днів. Наш підбір враховує повний обсяг курсу, твою дату НМТ та резерв. Введи хвилини й дні з картки вище та перевір денний лічильник.</p></details>`:''}
 </div>
 <div class="setup-finish"><span class="setup-number">✓</span><div><h3>Повтори для кожного предмета — і починай</h3><p>Перевір курс, навчальний рік, дату початку, хвилини, позначені дні та денну ціль. Далі відкривай звичайні уроки за своїм графіком, а резерв залиш на калібрування, повторення й пробні іспити.</p></div></div>
 </section>`;

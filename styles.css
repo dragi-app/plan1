@@ -69,3 +69,32 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}
 
 .setup-entry-steps.existing{grid-template-columns:repeat(2,minmax(0,1fr))}
 @media(max-width:1000px){.setup-entry-steps.existing{grid-template-columns:1fr}}
+
+/* Safari date/time controls must shrink with their grid tracks. */
+.dates-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.field input[type=date],.field input[type=time]{display:block;inline-size:100%;min-inline-size:0;max-inline-size:100%;-webkit-appearance:none;appearance:none}
+.field input::-webkit-date-and-time-value{min-width:0;text-align:left}
+.field input::-webkit-datetime-edit{min-width:0;padding:0}
+.setup-screen-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.setup-personal-heading>div,.setup-field,.setup-entry>div{min-width:0}
+.setup-course-pills button{max-width:100%;text-align:left;overflow-wrap:anywhere}
+.setup-course-pills .subject-icon{flex:none}
+@media(max-width:760px){.setup-screen-grid{grid-template-columns:minmax(0,1fr)}.field input,.field select{font-size:16px}}
+@media(max-width:600px){
+  .day-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 12px;padding:14px 16px}
+  .day-row .day-label{grid-column:1/-1;font-size:13px;min-height:32px}
+  .day-row .field{min-width:0;gap:6px}
+  .day-row .field span{font-size:10px}
+  .day-row .field input,.day-row .field select{font-size:16px;padding:10px;min-height:46px}
+  .day-row.off{grid-template-columns:minmax(0,1fr) auto}
+  .day-row.off .day-label{grid-column:auto}
+  .day-row .rest-text{grid-column:auto;font-size:10px}
+}
+@media(max-width:480px){.dates-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:360px){
+  .native-guide{padding:17px 11px}
+  .setup-personal{padding:11px}
+  .setup-screen-body{padding:12px}
+  .setup-weekdays{gap:3px}
+  .setup-weekdays>span{min-width:0;width:auto;flex:1;aspect-ratio:1;height:auto}
+}
